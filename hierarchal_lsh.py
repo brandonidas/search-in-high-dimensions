@@ -36,7 +36,7 @@ class HierarchicalLSH:
                     hash_value = self._hash(vector, hash_func)
                     table[hash_value].append(vector)
 
-    def query(self, query_vector):
+    def query(self, query_vector, probes_allowed = 5):
         # Find the most similar vector to the query using hierarchical LSH
         max_inner_product = float('-inf')
         most_similar_vector = None
@@ -52,7 +52,10 @@ class HierarchicalLSH:
             for vector in level_candidates:
                 inner_product = np.dot(vector, query_vector)
                 if inner_product > max_inner_product:
+                    probes_allowed -= 1
                     max_inner_product = inner_product
                     most_similar_vector = vector
+                    if probes_allowed == 0:
+                        return most_similar_vector, max_inner_product
         
         return most_similar_vector, max_inner_product

@@ -1,5 +1,5 @@
 import numpy as np
-from mips_lsh import LSH
+from base_lsh import LSH
 from hierarchal_lsh import HierarchicalLSH
 
 
