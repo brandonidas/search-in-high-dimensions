@@ -2,9 +2,10 @@ import math
 import numpy as np
 from boundedME import BoundedME
 
-def compute_ground_truth(query_vector, A_arms):
+def compute_ground_truth(query_vector, A_arms, K = 1):
     dot_products = np.dot(A_arms, query_vector)
     max_index = np.argmax(dot_products)
+    
     return A_arms[max_index]
 
 def test_bounded_ME():
@@ -64,24 +65,15 @@ def test_bounded_ME_with_Tracking():
 #test_bounded_ME_with_Tracking()
 
 def test_bounded_ME_with_Tracking_on_columns_with_distribution():
-    num_rows = 1000 # vectors
-    d = 1000  # Dimension
-    np.random.seed(42)
-    mean = np.random.uniform(1, 10)
-    std_dev = np.random.uniform(1, 10)
-    v = np.random.normal(loc=mean, scale=std_dev, size=(num_rows, d)).T
-
-    # Pop the query vector from v
-    query_vector = v[0]
-    v = v[1:, :]
+    v, query_vector = set_up_atoms_and_query()
     epsilon = 0.09 # suboptimality
     delta = 0.2 # probability margin # TODO seems to have no effect
     K = 10 
-    
+
     S, count = BoundedME(epsilon, delta, v, query_vector, K)
     
     # Use the last level in S
-    S_last = S[-1]
+
     
     # Compute the ground truth result
     ground_truth_vector = compute_ground_truth(query_vector, v)
@@ -96,5 +88,18 @@ def test_bounded_ME_with_Tracking_on_columns_with_distribution():
     print("OpCount: " + str(count))
     print("vs " + str(v.shape[0] * v.shape[1]) + "... which is empirically "\
           + str(math.ceil(100*count / (v.shape[0] * v.shape[1]))) + "% of brute force")
+
+def set_up_atoms_and_query():
+    num_rows = 10000 # vectors
+    d = 1000  # Dimension
+    np.random.seed(42)
+    mean = np.random.uniform(1, 10)
+    std_dev = np.random.uniform(1, 10)
+    v = np.random.normal(loc=mean, scale=std_dev, size=(num_rows, d)).T
+
+    # Pop the query vector from v
+    query_vector = v[0]
+    v = v[1:, :]
+    return v,query_vector
  
 test_bounded_ME_with_Tracking_on_columns_with_distribution()

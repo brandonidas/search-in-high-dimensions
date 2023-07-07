@@ -25,42 +25,42 @@ def remove_low_means(S, mean_dict, K):
 
 # Bounded Median Estimator
 def BoundedME(epsilon, delta, A_arms, query_vector, K=1):
-    # For tracking arithmetic operations count
+    # For tracking floating point operations count
     op_count = 0
 
-    S_current = A_arms  # None at index 0 so we can have 1-based indexing
-    S_previous = None
+    S_current = A_arms
     current_epsilon = epsilon / 4
     current_delta = delta / 2
-
-    l = 1
-    empirical_mean_dictionary = {tuple(a): 0 for a in A_arms}
-
+    reward_dictionary = {tuple(a): 0 for a in A_arms}
+    
     m = compute_m(delta, epsilon, A_arms)
     old_t = 0
     while len(S_current) > K:
         new_t = math.floor(m * pull_number_modifier(current_epsilon, current_delta, len(S_current), K))
         op_count += 6
 
-        for a in S_current:
-            arm_pulls = np.dot(query_vector[old_t:new_t], a[old_t:new_t])
-            empirical_mean = arm_pulls / (new_t - old_t - 1)
+        reward_dictionary, ops = pull_new_arms(query_vector, K, S_current, reward_dictionary, old_t, new_t)
+        op_count += ops
 
-            # Counting arithmetic operations
-            op_count += query_vector[old_t:new_t].size  # Counting multiplications inside np.dot
-            op_count += 1  # Division in empirical_mean calculation
-
-            empirical_mean_dictionary[tuple(a)] += empirical_mean
-
-        empirical_mean_dictionary = remove_low_means(S_current, empirical_mean_dictionary, K)
-        op_count += 1
-
-        S_current = list(empirical_mean_dictionary.keys())
+        S_current = list(reward_dictionary.keys())
         current_epsilon = current_epsilon * 3/4
         current_delta = current_delta / 2
-        l +=1
         old_t = new_t
+        op_count += 3
 
     return S_current, op_count
+
+def pull_new_arms(query_vector, K, S_current, reward_dictionary, old_t, new_t):
+    ops = 0
+    for a in S_current:
+        arm_pulls = np.dot(query_vector[old_t:new_t], a[old_t:new_t])
+        reward = arm_pulls # / (new_t - old_t - 1) # no need for actual mean
+        ops += query_vector[old_t:new_t].size  # Counting multiplications inside np.dot
+
+        reward_dictionary[tuple(a)] += reward
+
+    reward_dictionary = remove_low_means(S_current, reward_dictionary, K)
+    ops += 2
+    return reward_dictionary, ops
 
 
