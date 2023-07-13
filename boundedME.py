@@ -29,8 +29,7 @@ def BoundedME(epsilon, delta, A_arms, query_vector, K=1):
     op_count = 0
 
     S_current = A_arms
-    current_epsilon = epsilon / 4
-    current_delta = delta / 2
+    current_epsilon, current_delta = epsilon / 4, delta / 2
     reward_dictionary = {tuple(a): 0 for a in A_arms}
     
     m = compute_m(delta, epsilon, A_arms)

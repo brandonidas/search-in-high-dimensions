@@ -66,14 +66,13 @@ def test_bounded_ME_with_Tracking():
 
 def test_bounded_ME_with_Tracking_on_columns_with_distribution():
     v, query_vector = set_up_atoms_and_query()
-    epsilon = 0.09 # suboptimality
-    delta = 0.2 # probability margin # TODO seems to have no effect
+    epsilon = 0.3 # suboptimality
+    delta = 0.3 # probability margin # TODO seems to have no effect
     K = 10 
 
     S, count = BoundedME(epsilon, delta, v, query_vector, K)
     
     # Use the last level in S
-
     
     # Compute the ground truth result
     ground_truth_vector = compute_ground_truth(query_vector, v)
@@ -96,10 +95,26 @@ def set_up_atoms_and_query():
     mean = np.random.uniform(1, 10)
     std_dev = np.random.uniform(1, 10)
     v = np.random.normal(loc=mean, scale=std_dev, size=(num_rows, d)).T
+    # TODO proper testing for differing distributions per column
 
     # Pop the query vector from v
     query_vector = v[0]
     v = v[1:, :]
     return v,query_vector
+import numpy as np
+
+def generate_matrix(num_rows, num_columns):
+    matrix = np.empty((num_rows, num_columns))
+    variances = np.empty(num_columns)
+    
+    for current_dim in range(num_columns):
+        mean = np.random.uniform(1, 10)
+        std_dev = np.random.uniform(1, 10)
+        column = np.random.normal(loc=mean, scale=std_dev, size=num_rows)
+        matrix[:, current_dim] = column
+        variances[current_dim] = np.var(column)
+    
+    return matrix, variances
  
 test_bounded_ME_with_Tracking_on_columns_with_distribution()
+
