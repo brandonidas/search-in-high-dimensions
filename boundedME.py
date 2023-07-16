@@ -3,7 +3,7 @@ import math
 
 def compute_m(delta, epsilon, A_arms):
     b = np.max(A_arms, axis=0)
-    a = np.min(A_arms, axis=0)
+    a = 0 # np.min(A_arms, axis=0)
     
     u = ((np.log(1/delta) / 2) * ((b - a) ** 2) / (epsilon ** 2))[0]
     m = min((u + 1) / (1 + len(A_arms) * u), (u + u) / (1 + len(A_arms) * u))
