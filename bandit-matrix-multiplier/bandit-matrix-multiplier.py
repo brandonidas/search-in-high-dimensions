@@ -57,7 +57,7 @@ def pull_new_arms(query_vector, A_arms, K, S_current, reward_dictionary, old_t, 
     for i in S_current:
         a = A_arms[i]
         #print(torch.tensor(a)[old_t:new_t])
-        arm_pulls = torch.dot(query_vector[old_t:new_t], torch.tensor(a)[old_t:new_t])
+        arm_pulls = torch.dot(query_vector[old_t:new_t], a.clone().detach().requires_grad_(True)[old_t:new_t])
         reward = arm_pulls  # / (new_t - old_t - 1) # no need for actual mean
         ops += query_vector[old_t:new_t].numel()  # Counting multiplications inside torch.dot
 
@@ -187,8 +187,8 @@ def test_approximate_matrix_multiplication():
     torch.manual_seed(42)
     A = torch.randn(100, 50)
     B = torch.randn(50, 200)
-    K = 20
-    epsilon = 0.1
+    K = 30
+    epsilon = 0.01
     delta = 0.3
 
     # Compute the ground truth result
