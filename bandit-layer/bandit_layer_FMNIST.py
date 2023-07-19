@@ -24,8 +24,10 @@ class BanditLayer(nn.Module):
         nn.init.uniform_(self.bias, -bound, bound)
 
     def forward(self, input):
-        input = input.view(input.size(0), -1)  # Flatten the input tensor
-
+        if not self.training:
+            return torch.matmul(input, self.weight.t()) + self.bias
+        
+        # input = input.view(input.size(0), -1)  # Flatten the input tensor
         m, n = input.size(0), self.weight.size(0)
         p = input.size(1)
 
@@ -34,7 +36,7 @@ class BanditLayer(nn.Module):
         for j in range(n):
           query_vector = self.weight[j]
           k = math.ceil(m/3)
-          ApproximateActiveSet,_ = BoundedME(input, query_vector, k, 0.1,0.1)
+          ApproximateActiveSet,_ = BoundedME(input, query_vector, k, 0.3,0.1)
           for i in ApproximateActiveSet:
             output[i, j] = torch.dot(input[i], self.weight[j]) + self.bias[j]
 
@@ -45,14 +47,17 @@ class MyModel(nn.Module):
         super(MyModel, self).__init__()
 
         self.conv1 = nn.Conv2d(1, 16, kernel_size=3, stride=1, padding=1)
+        self.bn2d = nn.BatchNorm2d(16,affine=True)
+        # batch norm is needed to reduce vanishing gradient. 
         self.relu = nn.ReLU()
-        self.fc = BanditLayer(16 * 28 * 28, 10)
+        self.fc1 = BanditLayer(16 * 28 * 28, 10)
 
     def forward(self, x):
         x = self.conv1(x)
+        #x = self.bn2d(x)
         x = self.relu(x)
         x = x.view(x.size(0), -1)
-        x = self.fc(x)
+        x = self.fc1(x)
         return x
 
 # Load the FashionMNIST dataset
@@ -73,7 +78,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 # Training loop
-num_epochs = 5
+num_epochs = 1
 for epoch in range(num_epochs):
     running_loss = 0.0
     for i, (inputs, labels) in enumerate(train_loader):

@@ -1,6 +1,10 @@
 # search-in-high-dimensions
  Summer 2023 Directed Studies
 
+# Top K Matrix Multiplier via Bandits
+
+# Bandit Layer Neural Networ
+
 ## Results Record
 
 30 June 2023
