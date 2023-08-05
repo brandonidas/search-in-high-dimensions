@@ -3,6 +3,7 @@ import torch
 import torch.distributions as dist
 import numpy as np
 from torchBME import BME as BoundedME
+from bandit_layer import BanditLayer
 
 def compute_ground_truth(query_vector, A_arms, K=1):
     dot_products = torch.matmul(A_arms, query_vector)

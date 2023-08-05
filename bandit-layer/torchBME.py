@@ -3,7 +3,7 @@ import torch.nn.functional as F
 import math
 import numpy as np
 
-MIN_FLOAT = 2 ** (-300)
+MIN_FLOAT = 2 ** (-100)
 
 def compute_m(delta, epsilon, A_arms):
     # in pytorch dim = 1 is column wise. dim = 1 is row wise
@@ -15,9 +15,12 @@ def compute_m(delta, epsilon, A_arms):
     return m
 
 def remove_low_means(S, mean_dict, K):
+
+    # TODO replace with QuickSelect or other O(n) median finding algorithm. And test.
     elemnts_to_remove = math.ceil((len(S)-K) / 2)
     sorted_mean_list = sorted(mean_dict.items(), key=lambda x: x[1], reverse=False)
     threshold_mean = sorted_mean_list[elemnts_to_remove][1]
+
     new_mean_dict = dict(filter(lambda x: x[1] >= threshold_mean, mean_dict.items()))
     return new_mean_dict
 
@@ -31,7 +34,9 @@ def pull_new_arms(query_vector, A_arms, K, S_current, reward_dictionary, old_t, 
     ops = 0
     for i in S_current:
         a = A_arms[i]
-        arm_pulls = torch.dot(query_vector[old_t:new_t], a[old_t:new_t])
+        arm_pulls = np.dot(
+            query_vector[old_t:new_t].detach().numpy(), 
+            a[old_t:new_t].detach().numpy())
         reward = arm_pulls  # / (new_t - old_t - 1) # no need for actual mean
         ops += query_vector[old_t:new_t].numel()  # Counting multiplications inside torch.dot
 
@@ -46,6 +51,11 @@ def BME( A_arms, query_vector, K, epsilon=0.1, delta=0.3):
     # For tracking floating point operations count
     op_count = 0
 
+    A_arms.detach().numpy()
+    query_vector.detach().numpy()
+
+    # TODO convert below into use of 2 Column numpy array later for easy use of median function
+    
     S_current = np.arange(len(A_arms))
     current_epsilon, current_delta = epsilon / 4, delta / 2
     reward_dictionary = {i: 0 for i in S_current}

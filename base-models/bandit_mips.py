@@ -12,27 +12,21 @@ def BanditMIPS(v, query, error_probability, variance_proxy):
 
     while dused < d and len(Ssolution) > 1:
         J = np.random.randint(0, d)  
-        op_count += 1
+        
         for i in Ssolution:
           mu_hat[i] = (dused * mu_hat[i] + v[i][J] * query[J]) \
             / (dused + 1) # Update mu_hat_i 
           confidence_interval_on_current_dimension[i] = compute_confidence_interval(
            variance_proxy, i, n, dused, error_probability)
-          op_count += 5 + 10
+          op_count += 2 + 5
         
-        new_Ssolution = []
-        max_mu_hat = max(mu_hat)
-        for i in Ssolution:
-          if mu_hat[i] + confidence_interval_on_current_dimension[i] >= max_mu_hat - confidence_interval_on_current_dimension[i]:
-            new_Ssolution.append(i)
-          op_count += 3
-        Ssolution = new_Ssolution
+        Ssolution = remove_low_confidence_arms(op_count, Ssolution, confidence_interval_on_current_dimension, mu_hat)
+        dused += 1
         
         if len(Ssolution) == 1:
           print("singular condition met")
           print("dused = " + str(dused))
           return Ssolution[0], op_count
-        dused += 1
     
     print("len(Ssolution) after successive UCB elimination: " 
           + str(len(Ssolution)))
@@ -42,6 +36,16 @@ def BanditMIPS(v, query, error_probability, variance_proxy):
         return exhaustive_inner_product_search(v, query, Ssolution), op_count + len(Ssolution * d)
     else:
         print("Error: None Found")
+
+def remove_low_confidence_arms(op_count, Ssolution, confidence_interval_on_current_dimension, mu_hat):
+    new_Ssolution = []
+    max_mu_hat = max(mu_hat)
+    for i in Ssolution:
+      if mu_hat[i] + confidence_interval_on_current_dimension[i] >= max_mu_hat - confidence_interval_on_current_dimension[i]:
+        new_Ssolution.append(i)
+      op_count += 3
+    Ssolution = new_Ssolution
+    return Ssolution
 
 def compute_confidence_interval(variance_proxy, i, n, dused, error_probability):
    C_dused = variance_proxy[i] * np.sqrt(2 * np.log(4 * n * (max(1, dused) ** 2) / error_probability) / (dused + 1))  # Update C_dused

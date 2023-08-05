@@ -3,7 +3,13 @@
 
 # Top K Matrix Multiplier via Bandits
 
-# Bandit Layer Neural Networ
+# Bandit Layer Neural Network
+
+## Future Work
+
+Since Torch's Dot product is notoriously slow (much slower than NumPy's), potential future work could be implemented in some other library where the dot product is functional (at least as fast as Numpy).  [Source in PyTorch docs](
+https://discuss.pytorch.org/t/pytorch-tensor-slow-on-small-matrix-operations-large-overhead/67882/6)
+
 
 ## Results Record
 

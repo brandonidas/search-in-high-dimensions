@@ -12,14 +12,20 @@ def test_BanditMIPS():
     num_rows = 1000 # vectors
     d = 1000  # Dimension
     np.random.seed(42)
-    v = np.random.normal(size=(num_rows, d))
+
+    mean = 1 # BANDIT MIPS DELTA only works with positive values in my implementation
+    # despite claioms form the paper on being able to process non-negative values
+    std_dev = 1
+    v = np.random.normal(loc=mean, scale=std_dev, size=(num_rows, d))
 
     # Pop the query vector from v
     query = v[0]
     v = v[1:, :]
 
-    delta = 0.3
-    variance_proxy = np.ones(v.shape[0])*2/4 # just for this case because it is standard normal, variance = 1
+    delta = 0.1
+    a = mean - 2 * std_dev
+    b = mean + 2 * std_dev
+    variance_proxy = np.ones(v.shape[0]) * (b ** 2 - a**2)/4
     output, op_count = BanditMIPS(v, query, delta, variance_proxy) 
     dot_product = np.dot(v[output], query)
     if output != None:
@@ -28,7 +34,7 @@ def test_BanditMIPS():
     print("Ground truth: " + str(np.dot(ground_truth_vector, query)))
 
     print("op_count:" + str(op_count) + " which is " 
-          + str(op_count/ (num_rows * d) * 100) + "% of the naive method" )
+          + str(op_count / (num_rows * d) * 100) + "% of the naive method" )
 
 def test_BanditMIPS_varying_column_distribution():
     # Test case 1
@@ -36,8 +42,8 @@ def test_BanditMIPS_varying_column_distribution():
     d = 1000  # Dimension
     np.random.seed(42)
     
-    mean = np.random.uniform(1, 10)
-    std_dev = np.random.uniform(1, 10)
+    mean = 0
+    std_dev = 1
     v = np.random.normal(loc=mean, scale=std_dev, size=(num_rows, d)).T
 
     # Pop the query vector from v
