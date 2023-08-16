@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 import math
+import statistics
 import numpy as np
 
 MIN_FLOAT = 2 ** (-100)
@@ -17,11 +18,9 @@ def compute_m(delta, epsilon, A_arms):
 def remove_low_means(S, mean_dict, K):
 
     # TODO replace with QuickSelect or other O(n) median finding algorithm. And test.
-    elemnts_to_remove = math.ceil((len(S)-K) / 2)
-    sorted_mean_list = sorted(mean_dict.items(), key=lambda x: x[1], reverse=False)
-    threshold_mean = sorted_mean_list[elemnts_to_remove][1]
+    median = statistics.median(mean_dict.values())
 
-    new_mean_dict = dict(filter(lambda x: x[1] >= threshold_mean, mean_dict.items()))
+    new_mean_dict = dict(filter(lambda x: x[1] >= median, mean_dict.items()))
     return new_mean_dict
 
 def pull_number_modifier(current_epsilon, current_delta, S_size, K):
@@ -55,7 +54,6 @@ def BME( A_arms, query_vector, K, epsilon=0.1, delta=0.3):
     query_vector.detach().numpy()
 
     # TODO convert below into use of 2 Column numpy array later for easy use of median function
-    
     S_current = np.arange(len(A_arms))
     current_epsilon, current_delta = epsilon / 4, delta / 2
     reward_dictionary = {i: 0 for i in S_current}

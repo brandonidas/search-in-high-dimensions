@@ -38,25 +38,25 @@ class BanditLayer(nn.Module):
             return torch.matmul(input, self.weight.t()) + self.bias
         
         # input = input.view(input.size(0), -1)  # Flatten the input tensor
-        m, n = input.size(0), self.weight.size(0)
+        input_size, weight_size = input.size(0), self.weight.size(0)
 
         # Initialize the output matrix
-        output = torch.zeros((m, n))
-        ActiveSetSize = math.ceil(self.k * m)
+        output = torch.zeros((input_size, weight_size))
+        ActiveSetSize = math.ceil(self.k * input_size)
         if self.weights_are_query: 
-            for j in range(n):
+            for j in range(weight_size):
                 query_vector = self.weight[j]
                 ApproximateActiveSet,_ = \
                     BoundedME(input, query_vector, ActiveSetSize, self.epsilon, self.delta)
                 for i in ApproximateActiveSet:
                     output[i, j] = torch.dot(input[i], self.weight[j]) + self.bias[j]
         else: # input is query
-            for i in range(m):
+
+            # TODO rethink - this doesn't work.
+            for i in range(input_size):
                 query_vector = input[i]
                 ApproximateActiveSet,_ = \
                     BoundedME(self.weight, query_vector, ActiveSetSize, self.epsilon, self.delta)
                 for j in ApproximateActiveSet:
                     output[i, j] = torch.dot(input[i], self.weight[j]) + self.bias[j]
-
-
         return output

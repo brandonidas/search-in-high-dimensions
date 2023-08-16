@@ -8,6 +8,7 @@ import math
 
 from bandit_layer import BanditLayer
 from basic_linear_layer import BasicLinearLayer
+from vanilla_drop_out import VanillaDropOutLayer
 
 class MyModel(nn.Module):
     def __init__(self, layer_for_comparison):
@@ -31,9 +32,10 @@ class MyModel(nn.Module):
         x = self.bn2d(x)
         x = self.relu(x)
         x = x.view(x.size(0), -1)
-        x = self.fc1(x)
-        x = self.relu(x)
 
+        x = self.fc1(x)
+        
+        x = self.relu(x)
         x = self.fc2(x)
         return x
 
@@ -61,19 +63,26 @@ def training_and_testing_loop(layer_for_comparison, epochs = 1):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
-    epoch_prints = True
-    epoch_print_interval = 1500
+    epoch_prints = False
+    epoch_print_interval = 250
     early_prototyping_stop_flag = False
     early_prototyping_stop = 1000
+
+    process_time_stopping = True
+    process_time_stopping_limit = 300
     
     num_epochs = 1 # epochs
     # Record the starting time
     start_time = time.process_time()
     total_forwardprop_time = 0
     total_backprop_time = 0
+
+    batches_covered = 0
+
     for epoch in range(num_epochs):
         running_loss = 0.0
         for i, (inputs, labels) in enumerate(train_loader):
+            batches_covered += 1
             optimizer.zero_grad()
 
             # Forward pass
@@ -82,7 +91,6 @@ def training_and_testing_loop(layer_for_comparison, epochs = 1):
             loss = criterion(outputs, labels)
             end_forward_prop_time = time.process_time()
             total_forwardprop_time += end_forward_prop_time - start_forward_prop_time
-
 
             # Backward pass and optimization
             start_backprop_time = time.process_time()
@@ -100,6 +108,12 @@ def training_and_testing_loop(layer_for_comparison, epochs = 1):
             if i == early_prototyping_stop and early_prototyping_stop_flag == True:
                 print("----- early-prototyping stopping")
                 break
+            
+            end_time = time.process_time()
+            elapsed_time = end_time - start_time
+            if process_time_stopping and process_time_stopping_limit <= elapsed_time:
+                print("----- process time stopping")
+                break 
 
     # Record the ending time
     end_time = time.process_time()
@@ -108,11 +122,12 @@ def training_and_testing_loop(layer_for_comparison, epochs = 1):
     print(f"Elapsed training time: {elapsed_time:.6f} process time")
     print(f"Forward-prop training time: {total_forwardprop_time:.6f} process time")
     print(f"Back-prop training time: {total_backprop_time:.6f} process time")
+    print(f"batches_covered: {batches_covered:.6f} batches")
     
     results_dict["elapsed_time"] = elapsed_time
+    results_dict["batches covered"] = batches_covered
     results_dict["total_forwardprop_time"] = total_forwardprop_time
     results_dict["total_backprop_time"] = total_backprop_time
-
 
     # Evaluation on the test set
     model.eval()
@@ -127,22 +142,43 @@ def training_and_testing_loop(layer_for_comparison, epochs = 1):
 
     accuracy = total_correct / total_samples
     print(f'Test Accuracy: {accuracy * 100}%')
-    print("chance is 6.75 %")
+    # print("chance is 6.75 %")
     results_dict["test_accuracy"] = accuracy
 
     return results_dict
 
 
-comparison_layer_output_dim = 64
+comparison_layer_output_dim = 32
 print("")
 print("weights are query on bandit layer")
-training_and_testing_loop(BanditLayer(10816, comparison_layer_output_dim, 0.1))
-print("")
-print("inputs are query on bandit layers")
-training_and_testing_loop(BanditLayer(10816, comparison_layer_output_dim, 0.1, weights_are_query=False))
+def percent_testing():
+    active_nodes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    
+    for node_percent in active_nodes:
+        print(f"for {node_percent}% active nodes:")
+        training_and_testing_loop(BanditLayer(10816, comparison_layer_output_dim, node_percent / 100))
+#percent_testing()
+
 print("")
 print("basic dot product layer")
-training_and_testing_loop(BasicLinearLayer(10816,comparison_layer_output_dim))
+# training_and_testing_loop(BasicLinearLayer(10816,comparison_layer_output_dim))
+
+print("vanilla dropout")
+#training_and_testing_loop(VanillaDropOutLayer(10816,comparison_layer_output_dim, 0.7))
+
+print("0.7 Bandit Layer with varying epsilon")
+training_and_testing_loop(BanditLayer(10816, comparison_layer_output_dim, 0.7, epsilon=0.5, delta=0.9))
+
+'''
+TODO look at old FMNIST notebook for structure
+----- process time stopping
+Elapsed training time: 1000.710152 process time
+Forward-prop training time: 152.501427 process time
+Back-prop training time: 835.007754 process time
+Test Accuracy: 82.72%
+
+
+'''
 
 '''
 Experiment design
