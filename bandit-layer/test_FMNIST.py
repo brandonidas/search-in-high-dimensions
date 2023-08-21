@@ -18,7 +18,7 @@ class MyModel(nn.Module):
         self.conv1 = nn.Conv2d(1, 16, kernel_size=3)
         self.bn2d = nn.BatchNorm2d(16,affine=True)
         # batch norm is needed to reduce vanishing gradient. 
-        self.relu = nn.LeakyReLU(0.02)
+        self.relu = nn.ReLU(0.02)
         self.fc1 = layer_for_comparison
         self.fc2 = nn.Linear(
             in_features=layer_for_comparison.output_dim, 
@@ -34,8 +34,8 @@ class MyModel(nn.Module):
         x = x.view(x.size(0), -1)
 
         x = self.fc1(x)
-        
         x = self.relu(x)
+
         x = self.fc2(x)
         return x
 
@@ -64,12 +64,12 @@ def training_and_testing_loop(layer_for_comparison, epochs = 1):
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
     epoch_prints = False
-    epoch_print_interval = 250
+    epoch_print_interval = 500
     early_prototyping_stop_flag = False
     early_prototyping_stop = 1000
 
     process_time_stopping = True
-    process_time_stopping_limit = 300
+    process_time_stopping_limit = 1000
     
     num_epochs = 1 # epochs
     # Record the starting time
@@ -78,6 +78,7 @@ def training_and_testing_loop(layer_for_comparison, epochs = 1):
     total_backprop_time = 0
 
     batches_covered = 0
+    loss_at_batch = dict()
 
     for epoch in range(num_epochs):
         running_loss = 0.0
@@ -100,6 +101,7 @@ def training_and_testing_loop(layer_for_comparison, epochs = 1):
             total_backprop_time += end_backprop_time - start_backprop_time
 
             running_loss += loss.item()
+            #loss_at_batch[batches_covered] = running_loss
 
             # Print the loss every 100 mini-batches
             if epoch_prints and (i + 1) % epoch_print_interval == 0:
@@ -166,11 +168,12 @@ print("basic dot product layer")
 print("vanilla dropout")
 #training_and_testing_loop(VanillaDropOutLayer(10816,comparison_layer_output_dim, 0.7))
 
-print("0.7 Bandit Layer with varying epsilon")
-training_and_testing_loop(BanditLayer(10816, comparison_layer_output_dim, 0.7, epsilon=0.5, delta=0.9))
+print(" Bandit Layer with varying epsilon")
+training_and_testing_loop(BanditLayer(10816, comparison_layer_output_dim, 0.5, epsilon=0.01, delta=0.9))
 
 '''
 TODO look at old FMNIST notebook for structure
+
 ----- process time stopping
 Elapsed training time: 1000.710152 process time
 Forward-prop training time: 152.501427 process time

@@ -1,0 +1,217 @@
+\begin{lstlisting}
+Data with 1000 seconds process time limit for training
+
+Standard NN:
+    Elapsed training time: 1000.710152 process time
+Forward-prop training time: 152.501427 process time
+Back-prop training time: 835.007754 process time
+Test Accuracy: 82.72%
+
+K = 0.1 ----- process time stopping
+Elapsed training time: 1000.368176 process time
+Forward-prop training time: 696.759115 process time
+Back-prop training time: 268.987358 process time
+Test Accuracy: 78.08%
+
+weights are query on bandit layer
+for 10% active nodes:
+Elapsed training time: 1001.502812 process time
+Forward-prop training time: 695.572062 process time
+Back-prop training time: 272.236102 process time
+Test Accuracy: 75.33999999999999%
+for 20% active nodes:
+Elapsed training time: 1002.198373 process time
+Forward-prop training time: 565.911339 process time
+Back-prop training time: 408.826776 process time
+Test Accuracy: 81.17999999999999%
+for 30% active nodes:
+Elapsed training time: 1002.080213 process time
+Forward-prop training time: 562.217428 process time
+Back-prop training time: 411.527550 process time
+Test Accuracy: 77.36%
+for 40% active nodes:
+Elapsed training time: 1002.228354 process time
+Forward-prop training time: 549.182407 process time
+Back-prop training time: 425.889653 process time
+Test Accuracy: 80.41%
+for 50% active nodes:
+Elapsed training time: 1002.865897 process time
+Forward-prop training time: 405.197748 process time
+Back-prop training time: 577.641652 process time
+Test Accuracy: 81.78%
+for 60% active nodes:
+Elapsed training time: 1003.293797 process time
+Forward-prop training time: 398.168366 process time
+Back-prop training time: 584.749544 process time
+Test Accuracy: 81.45%
+for 70% active nodes:
+Elapsed training time: 1003.287758 process time
+Forward-prop training time: 387.884187 process time
+Back-prop training time: 595.685229 process time
+Test Accuracy: 81.86%
+for 80% active nodes:
+Elapsed training time: 1003.009969 process time
+Forward-prop training time: 386.244987 process time
+Back-prop training time: 597.402690 process time
+Test Accuracy: 81.26%
+for 90% active nodes:
+Elapsed training time: 1003.293372 process time
+Forward-prop training time: 393.176989 process time
+Back-prop training time: 589.887145 process time
+Test Accuracy: 81.49%
+for 100% active nodes:
+Elapsed training time: 1005.113997 process time
+Forward-prop training time: 221.297239 process time
+Back-prop training time: 770.582377 process time
+Test Accuracy: 83.91999999999999%
+
+weights are query on bandit layer
+for 10% active nodes:
+----- process time stopping
+Elapsed training time: 1000.006673 process time
+Forward-prop training time: 678.613039 process time
+Back-prop training time: 289.169000 process time
+batches_covered: 2357.000000 batches
+Test Accuracy: 73.8%
+for 20% active nodes:
+----- process time stopping
+Elapsed training time: 1000.253602 process time
+Forward-prop training time: 555.923930 process time
+Back-prop training time: 416.703399 process time
+batches_covered: 2009.000000 batches
+Test Accuracy: 76.77000000000001%
+for 30% active nodes:
+----- process time stopping
+Elapsed training time: 1000.464225 process time
+Forward-prop training time: 552.351435 process time
+Back-prop training time: 420.742559 process time
+batches_covered: 1977.000000 batches
+Test Accuracy: 78.42%
+for 40% active nodes:
+----- process time stopping
+Elapsed training time: 1000.140299 process time
+Forward-prop training time: 533.402381 process time
+Back-prop training time: 440.078174 process time
+batches_covered: 1935.000000 batches
+Test Accuracy: 79.54%
+for 50% active nodes:
+----- process time stopping
+Elapsed training time: 1000.143047 process time
+Forward-prop training time: 399.029736 process time
+Back-prop training time: 580.254102 process time
+batches_covered: 1500.000000 batches
+Test Accuracy: 81.01%
+for 60% active nodes:
+----- process time stopping
+Elapsed training time: 1000.361574 process time
+Forward-prop training time: 394.681789 process time
+Back-prop training time: 585.144364 process time
+batches_covered: 1459.000000 batches
+Test Accuracy: 81.98%
+for 70% active nodes:
+----- process time stopping
+Elapsed training time: 1000.305842 process time
+Forward-prop training time: 389.639895 process time
+Back-prop training time: 590.216764 process time
+batches_covered: 1454.000000 batches
+Test Accuracy: 82.83%
+for 80% active nodes:
+----- process time stopping
+Elapsed training time: 1000.640030 process time
+Forward-prop training time: 384.110008 process time
+Back-prop training time: 596.689849 process time
+batches_covered: 1452.000000 batches
+Test Accuracy: 80.57%
+for 90% active nodes:
+----- process time stopping
+Elapsed training time: 1000.573607 process time
+Forward-prop training time: 363.519923 process time
+Back-prop training time: 619.880730 process time
+batches_covered: 1356.000000 batches
+Test Accuracy: 82.42%
+for 100% active nodes:
+----- process time stopping
+Elapsed training time: 1000.944774 process time
+Forward-prop training time: 210.739586 process time
+Back-prop training time: 778.436289 process time
+batches_covered: 927.000000 batches
+Test Accuracy: 82.55%
+
+
+    ----- process time stopping
+Elapsed training time: 300.090423 process time
+Forward-prop training time: 45.490545 process time
+Back-prop training time: 250.612177 process time
+batches_covered: 302.000000 batches
+Test Accuracy: 79.49000000000001%
+
+for 10% active nodes:
+----- process time stopping
+Elapsed training time: 300.188681 process time
+Forward-prop training time: 202.929230 process time
+Back-prop training time: 87.702078 process time
+batches_covered: 768.000000 batches
+Test Accuracy: 70.78999999999999%
+for 20% active nodes:
+----- process time stopping
+Elapsed training time: 300.157560 process time
+Forward-prop training time: 162.535438 process time
+Back-prop training time: 129.924816 process time
+batches_covered: 607.000000 batches
+Test Accuracy: 69.25%
+for 30% active nodes:
+----- process time stopping
+Elapsed training time: 300.031182 process time
+Forward-prop training time: 159.878184 process time
+Back-prop training time: 132.594227 process time
+batches_covered: 598.000000 batches
+Test Accuracy: 73.04%
+for 40% active nodes:
+----- process time stopping
+Elapsed training time: 300.085335 process time
+Forward-prop training time: 155.492339 process time
+Back-prop training time: 137.270518 process time
+batches_covered: 589.000000 batches
+Test Accuracy: 70.49%
+for 50% active nodes:
+----- process time stopping
+Elapsed training time: 300.615933 process time
+Forward-prop training time: 115.924560 process time
+Back-prop training time: 178.995462 process time
+batches_covered: 439.000000 batches
+Test Accuracy: 77.84%
+for 60% active nodes:
+----- process time stopping
+Elapsed training time: 300.197394 process time
+Forward-prop training time: 112.665294 process time
+Back-prop training time: 182.206591 process time
+batches_covered: 425.000000 batches
+Test Accuracy: 75.86%
+for 70% active nodes:
+----- process time stopping
+Elapsed training time: 300.136585 process time
+Forward-prop training time: 110.504618 process time
+Back-prop training time: 184.462557 process time
+batches_covered: 418.000000 batches
+Test Accuracy: 69.92%
+for 80% active nodes:
+----- process time stopping
+Elapsed training time: 300.618635 process time
+Forward-prop training time: 109.731805 process time
+Back-prop training time: 185.965133 process time
+batches_covered: 421.000000 batches
+Test Accuracy: 77.33%
+for 90% active nodes:
+----- process time stopping
+Elapsed training time: 300.722430 process time
+Forward-prop training time: 106.104690 process time
+Back-prop training time: 189.661422 process time
+batches_covered: 414.000000 batches
+Test Accuracy: 77.81%
+for 100% active nodes:
+----- process time stopping
+Elapsed training time: 301.100897 process time
+Forward-prop training time: 63.067569 process time
+Back-prop training time: 234.630267 process time
+batches_covered: 275.000000 batches
+Test Accuracy: 79.16%
